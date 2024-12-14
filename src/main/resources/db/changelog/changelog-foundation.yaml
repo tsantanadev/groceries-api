@@ -1,0 +1,131 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-brand-table
+      author: tsantanadev
+      preConditions:
+          onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: brand
+      changes:
+        - createTable:
+            tableName: brand
+            columns:
+                - column:
+                    name: id
+                    type: UUID
+                    constraints:
+                        primaryKey: true
+                        nullable: false
+                - column:
+                    name: name
+                    type: VARCHAR(255)
+                - column:
+                    name: created_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+                - column:
+                    name: updated_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+
+  - changeSet:
+      id: create-product-group-table
+      author: tsantanadev
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: product_group
+      changes:
+        - createTable:
+            tableName: product_group
+            columns:
+                - column:
+                    name: id
+                    type: UUID
+                    constraints:
+                        primaryKey: true
+                        nullable: false
+                - column:
+                    name: name
+                    type: VARCHAR(255)
+                - column:
+                    name: created_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+                - column:
+                    name: updated_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+      
+  - changeSet:
+      id: create-product-table
+      author: tsantanadev
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: brand
+          - tableExists:
+              tableName: product_group
+          - not:
+              tableExists:
+                tableName: product
+      changes:
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: gtin
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: bestPrice
+                  type: DECIMAL(10,2)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: brand_id
+                  type: UUID
+              - column:
+                  name: product_group_id
+                  type: UUID
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames: brand_id
+            referencedTableName: brand
+            referencedColumnNames: id
+            constraintName: fk_product_brand
+            onDelete: SET NULL
+            onUpdate: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames: product_group_id
+            referencedTableName: product_group
+            referencedColumnNames: id
+            constraintName: fk_product_product_group
+            onDelete: SET NULL
+            onUpdate: CASCADE
