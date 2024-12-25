@@ -1,12 +1,11 @@
 package com.tsantana.groceries_api.services;
 
-import com.tsantana.groceries_api.exceptions.NotFountException;
+import com.tsantana.groceries_api.exceptions.NotFoundException;
 import com.tsantana.groceries_api.exceptions.SchemaViolationException;
 import com.tsantana.groceries_api.models.Brand;
 import com.tsantana.groceries_api.repositories.BrandRepository;
 import com.tsantana.groceries_api.vos.BrandRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,7 +29,7 @@ public class BrandService {
 
     public Brand update(final BrandRequest brand, final UUID id) {
         final Brand existingBrand = repository.findById(id).orElseThrow(
-                () -> new NotFountException("Brand not found")
+                () -> new NotFoundException("Brand not found")
         );
 
         existingBrand.setName(brand.name());

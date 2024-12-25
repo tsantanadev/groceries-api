@@ -15,6 +15,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Group {
 
+        public Group(String name) {
+                this.name = name;
+                this.createdAt = LocalDateTime.now();
+                this.updatedAt = LocalDateTime.now();
+        }
+
         @Id
         @GeneratedValue(generator = "UUID")
         @Column(name = "id", updatable = false, nullable = false)
