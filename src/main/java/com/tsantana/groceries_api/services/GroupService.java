@@ -38,7 +38,12 @@ public class GroupService {
     }
 
     public Group findByName(final String name) {
-        return repository.findByName(name);
+        return repository.findByName(name).orElseThrow(
+                () -> new NotFoundException("Group not found")
+        );
     }
 
+    public Boolean existsById(final UUID id) {
+        return repository.existsById(id);
+    }
 }

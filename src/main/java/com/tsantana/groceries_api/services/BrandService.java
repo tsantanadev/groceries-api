@@ -41,4 +41,7 @@ public class BrandService {
         return repository.findByName(name);
     }
 
+    public Boolean existsById(final UUID id) {
+        return repository.existsById(id);
+    }
 }

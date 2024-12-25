@@ -98,7 +98,7 @@ databaseChangeLog:
                   name: name
                   type: VARCHAR(255)
               - column:
-                  name: bestPrice
+                  name: best_price
                   type: DECIMAL(10,2)
               - column:
                   name: created_at
@@ -114,7 +114,7 @@ databaseChangeLog:
                   name: brand_id
                   type: UUID
               - column:
-                  name: product_group_id
+                  name: group_id
                   type: UUID
         - addForeignKeyConstraint:
             baseTableName: product
@@ -126,7 +126,7 @@ databaseChangeLog:
             onUpdate: CASCADE
         - addForeignKeyConstraint:
             baseTableName: product
-            baseColumnNames: product_group_id
+            baseColumnNames: group_id
             referencedTableName: product_group
             referencedColumnNames: id
             constraintName: fk_product_product_group

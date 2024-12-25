@@ -33,12 +33,22 @@ public class Product {
         @Column(name = "brand_id")
         private UUID brandId;
 
-        @Column(name = "price", nullable = false)
-        private BigDecimal price;
+        @Column(name = "best_price", nullable = false)
+        private BigDecimal bestPrice;
 
         @Column(name = "created_at", nullable = false)
         private LocalDateTime createdAt;
 
         @Column(name = "updated_at", nullable = false)
         private LocalDateTime updatedAt;
+
+        public Product(final String name, final String gtin, final UUID groupId, final UUID brandId, BigDecimal price) {
+                this.name = name;
+                this.gtin = gtin;
+                this.groupId = groupId;
+                this.brandId = brandId;
+                this.bestPrice = price;
+                this.createdAt = LocalDateTime.now();
+                this.updatedAt = LocalDateTime.now();
+        }
 }
