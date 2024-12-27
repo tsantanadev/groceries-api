@@ -1,0 +1,174 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: create-postgis-extension
+      author: tsantanadev
+      changes:
+        -   sql:
+                dbms: postgresql
+                endDelimiter: ;
+                splitStatements: true
+                sql: CREATE EXTENSION IF NOT EXISTS postgis;
+  - changeSet:
+      id: create-address-table
+      author: tsantanadev
+      preConditions:
+          onFail: MARK_RAN
+          not:
+              tableExists:
+                  tableName: product_group
+      changes:
+        - createTable:
+            tableName: address
+            columns:
+                - column:
+                    name: id
+                    type: UUID
+                    constraints:
+                        primaryKey: true
+                        nullable: false
+                - column:
+                    name: street
+                    type: VARCHAR(255)
+                - column:
+                    name: number
+                    type: VARCHAR(10)
+                - column:
+                    name: complement
+                    type: VARCHAR(255)
+                - column:
+                    name: neighborhood
+                    type: VARCHAR(255)
+                - column:
+                    name: city
+                    type: VARCHAR(255)
+                - column:
+                    name: state
+                    type: VARCHAR(2)
+                - column:
+                    name: country
+                    type: VARCHAR(255)
+                - column:
+                    name: zip_code
+                    type: VARCHAR(10)
+                - column:
+                    name: location
+                    type: GEOGRAPHY(Point, 4326)
+                - column:
+                    name: created_at
+                    type: TIMESTAMP
+                    constraints:
+                        nullable: false
+                - column:
+                    name: updated_at
+                    type: TIMESTAMP
+                    constraints:
+                        nullable: false
+  - changeSet:
+      id: create-store-table
+      author: tsantanadev
+      preConditions:
+        onFail: MARK_RAN
+        and:
+            - tableExists:
+                  tableName: address
+            - not:
+                  tableExists:
+                      tableName: store
+      changes:
+        - createTable:
+            tableName: store
+            columns:
+                - column:
+                    name: id
+                    type: UUID
+                    constraints:
+                        primaryKey: true
+                        nullable: false
+                - column:
+                    name: name
+                    type: VARCHAR(255)
+                    constraints:
+                        unique: true
+                        nullable: false
+                - column:
+                    name: address_id
+                    type: UUID
+                    constraints:
+                        nullable: false
+                - column:
+                    name: created_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+                - column:
+                    name: updated_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+        - addForeignKeyConstraint:
+            baseColumnNames: address_id
+            baseTableName: store
+            constraintName: fk_store_address
+            referencedColumnNames: id
+            referencedTableName: address
+  - changeSet:
+      id: create-price-table
+      author: tsantanadev
+      preConditions:
+          onFail: MARK_RAN
+          not:
+              tableExists:
+                  tableName: price
+      changes:
+        - createTable:
+            tableName: price
+            columns:
+                - column:
+                    name: id
+                    type: UUID
+                    constraints:
+                        primaryKey: true
+                        nullable: false
+                - column:
+                    name: product_id
+                    type: UUID
+                    constraints:
+                        nullable: false
+                - column:
+                    name: store_id
+                    type: UUID
+                    constraints:
+                        nullable: false
+                - column:
+                    name: price
+                    type: DECIMAL(10,2)
+                    constraints:
+                        nullable: false
+                - column:
+                    name: is_promotion
+                    type: BOOLEAN
+                    constraints:
+                        nullable: false
+                - column:
+                    name: created_at
+                    type: TIMESTAMP
+                    constraints:
+                        nullable: false
+                - column:
+                    name: updated_at
+                    type: TIMESTAMP
+                    constraints:
+                        nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: price
+            constraintName: fk_price_product
+            referencedColumnNames: id
+            referencedTableName: product
+        - addForeignKeyConstraint:
+            baseColumnNames: store_id
+            baseTableName: price
+            constraintName: fk_price_store
+            referencedColumnNames: id
+            referencedTableName: store
