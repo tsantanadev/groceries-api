@@ -3,6 +3,7 @@ package com.tsantana.groceries_api.services;
 import com.tsantana.groceries_api.models.Store;
 import com.tsantana.groceries_api.repositories.StoreRepository;
 import com.tsantana.groceries_api.vos.StoreRequest;
+import com.tsantana.groceries_api.vos.StoreResponse;
 import lombok.AllArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -24,13 +25,17 @@ public class StoreService {
         return repository.save(store);
     }
 
-    public List<Store> findByName(final String name) {
-        return repository.findAllByName(name);
+    public List<StoreResponse> findByName(final String name,
+                                  final Double latitude,
+                                  final Double longitude,
+                                  final Double radius) {
+        Point point = getPoint(latitude, longitude);
+        return repository.findAllByNameAndLocation(name, point, radius);
     }
 
-    public List<Store> findByLocation(final Double latitude, final Double longitude) {
+    public List<StoreResponse> findByLocation(final Double latitude, final Double longitude, final Double radius) {
         Point point = getPoint(latitude, longitude);
-        return repository.findAllByLocation(point, 5000.0);
+        return repository.findAllByLocation(point, radius);
     }
 
     private Point getPoint(final Double latitude, final Double longitude) {

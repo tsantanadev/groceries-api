@@ -1,6 +1,7 @@
 package com.tsantana.groceries_api.repositories;
 
 import com.tsantana.groceries_api.models.Store;
+import com.tsantana.groceries_api.vos.StoreResponse;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,14 +14,38 @@ import java.util.UUID;
 @Repository
 public interface StoreRepository extends JpaRepository<Store, UUID> {
 
-    @Query("SELECT s FROM Store s WHERE LOWER(s.name) = LOWER(:name)")
-    List<Store> findAllByName(@Param("name") String name);
-
-    // TODO(Return the distance in the response)
     @Query("""
-        SELECT s FROM Store s JOIN s.address a
+        SELECT NEW com.tsantana.groceries_api.vos.StoreResponse(
+            s.id,
+            s.name,
+            NEW com.tsantana.groceries_api.vos.AddressResponse(a),
+            FUNCTION('ST_Distance', a.location, :point),
+            s.createdAt,
+            s.updatedAt
+        )
+        FROM Store s
+        JOIN s.address a
+        WHERE LOWER(s.name) LIKE CONCAT('%',LOWER(:name),'%')
+        AND FUNCTION('ST_DWithin', a.location, :point, :radius) = true
+        ORDER BY FUNCTION('ST_Distance', a.location, :point)
+        """)
+    List<StoreResponse> findAllByNameAndLocation(@Param("name") String name,
+                                                 @Param("point") final Point point,
+                                                 @Param("radius") final Double radius);
+
+    @Query("""
+        SELECT NEW com.tsantana.groceries_api.vos.StoreResponse(
+            s.id,
+            s.name,
+            NEW com.tsantana.groceries_api.vos.AddressResponse(a),
+            FUNCTION('ST_Distance', a.location, :point),
+            s.createdAt,
+            s.updatedAt
+        )
+        FROM Store s
+        JOIN s.address a
         WHERE FUNCTION('ST_DWithin', a.location, :point, :radius) = true
         ORDER BY FUNCTION('ST_Distance', a.location, :point)
         """)
-    List<Store> findAllByLocation(@Param("point") final Point point, @Param("radius") final Double radius);
+    List<StoreResponse> findAllByLocation(@Param("point") final Point point, @Param("radius") final Double radius);
 }

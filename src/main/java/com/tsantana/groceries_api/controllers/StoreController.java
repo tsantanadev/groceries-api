@@ -70,19 +70,16 @@ public class StoreController {
     )
     public ResponseEntity<List<StoreResponse>> get(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) Double latitude,
-            @RequestParam(required = false) Double longitude) {
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
+            @RequestParam(required = false, defaultValue = "15000") Double radius){
 
         if (name != null) {
-            final var stores = service.findByName(name);
-            return ResponseEntity.ok(stores.stream().map(StoreResponse::new).toList());
+            final var stores = service.findByName(name, latitude, longitude, radius);
+            return ResponseEntity.ok(stores);
         }
 
-        if (latitude == null || longitude == null) {
-            throw new IllegalArgumentException("Latitude and longitude or name are required");
-        }
-
-        final var stores = service.findByLocation(latitude, longitude);
-        return ResponseEntity.ok(stores.stream().map(StoreResponse::new).toList());
+        final var stores = service.findByLocation(latitude, longitude, radius);
+        return ResponseEntity.ok(stores);
     }
 }
