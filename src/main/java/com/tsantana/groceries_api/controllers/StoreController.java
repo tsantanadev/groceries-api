@@ -74,12 +74,8 @@ public class StoreController {
             @RequestParam Double longitude,
             @RequestParam(required = false, defaultValue = "15000") Double radius){
 
-        if (name != null) {
-            final var stores = service.findByName(name, latitude, longitude, radius);
-            return ResponseEntity.ok(stores);
-        }
+        final var stores = service.findByNameAndLocation(name, latitude, longitude, radius);
 
-        final var stores = service.findByLocation(latitude, longitude, radius);
         return ResponseEntity.ok(stores);
     }
 }

@@ -25,17 +25,15 @@ public class StoreService {
         return repository.save(store);
     }
 
-    public List<StoreResponse> findByName(final String name,
-                                  final Double latitude,
-                                  final Double longitude,
-                                  final Double radius) {
+    public List<StoreResponse> findByNameAndLocation(final String name,
+                                                     final Double latitude,
+                                                     final Double longitude,
+                                                     final Double radius) {
         Point point = getPoint(latitude, longitude);
+        if (name == null) {
+            return repository.findAllByLocation(point, radius);
+        }
         return repository.findAllByNameAndLocation(name, point, radius);
-    }
-
-    public List<StoreResponse> findByLocation(final Double latitude, final Double longitude, final Double radius) {
-        Point point = getPoint(latitude, longitude);
-        return repository.findAllByLocation(point, radius);
     }
 
     private Point getPoint(final Double latitude, final Double longitude) {
