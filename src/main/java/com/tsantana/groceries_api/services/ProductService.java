@@ -62,10 +62,7 @@ public class ProductService {
 
     private void validateGroup(final UUID groupId) {
         if (groupId != null) {
-            final var groupExists = groupService.existsById(groupId);
-            if (!groupExists) {
-                throw new NotFoundException(String.format("Group with id %s does not exist", groupId));
-            }
+            groupService.existsById(groupId);
         }
     }
 
@@ -78,4 +75,9 @@ public class ProductService {
         }
     }
 
+    public void existsById(final UUID id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Product not found");
+        }
+    }
 }

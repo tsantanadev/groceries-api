@@ -1,0 +1,97 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: create-shopping-list-table
+      author: tsantanadev
+      changes:
+        - createTable:
+            tableName: shopping_list
+            columns:
+                - column:
+                    name: id
+                    type: UUID
+                    constraints:
+                        primaryKey: true
+                        nullable: false
+                - column:
+                    name: name
+                    type: VARCHAR(255)
+                - column:
+                    name: created_at
+                    type: TIMESTAMP
+                    constraints:
+                        nullable: false
+                - column:
+                    name: updated_at
+                    type: TIMESTAMP
+                    constraints:
+                        nullable: false
+  - changeSet:
+      id: create-shopping-list-items-table
+      author: tsantanadev
+      preConditions:
+        onFail: WARN
+        and:
+            - tableExists:
+                  tableName: shopping_list
+            - not:
+                  tableExists:
+                      tableName: shopping_list_items
+      changes:
+        - createTable:
+            tableName: shopping_list_items
+            columns:
+                - column:
+                    name: id
+                    type: UUID
+                    constraints:
+                        primaryKey: true
+                        nullable: false
+                - column:
+                    name: group_id
+                    type: UUID
+                - column:
+                    name: product_id
+                    type: UUID
+                - column:
+                    name: quantity
+                    type: DECIMAL(10,2)
+                - column:
+                    name: unit
+                    type: VARCHAR(255)
+                - column:
+                    name: shopping_list_id
+                    type: UUID
+                    constraints:
+                        nullable: false
+                - column:
+                      name: checked
+                      type: BOOLEAN
+                - column:
+                    name: created_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+                - column:
+                    name: updated_at
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: true
+        - addForeignKeyConstraint:
+              baseColumnNames: shopping_list_id
+              baseTableName: shopping_list_items
+              constraintName: fk_shopping_list_items_shopping_list
+              referencedColumnNames: id
+              referencedTableName: shopping_list
+        - addForeignKeyConstraint:
+            baseColumnNames: group_id
+            baseTableName: shopping_list_items
+            constraintName: fk_shopping_list_items_group
+            referencedColumnNames: id
+            referencedTableName: product_group
+        - addForeignKeyConstraint:
+              baseColumnNames: product_id
+              baseTableName: shopping_list_items
+              constraintName: fk_shopping_list_items_product
+              referencedColumnNames: id
+              referencedTableName: product

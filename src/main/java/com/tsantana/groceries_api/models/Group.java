@@ -21,6 +21,10 @@ public class Group {
                 this.updatedAt = LocalDateTime.now();
         }
 
+        public Group(UUID groupId) {
+                this.id = groupId;
+        }
+
         @Id
         @GeneratedValue(generator = "UUID")
         @Column(name = "id", updatable = false, nullable = false)

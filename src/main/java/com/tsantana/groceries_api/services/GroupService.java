@@ -43,7 +43,10 @@ public class GroupService {
         );
     }
 
-    public Boolean existsById(final UUID id) {
-        return repository.existsById(id);
+    public void existsById(final UUID id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Group not found");
+        }
     }
+
 }

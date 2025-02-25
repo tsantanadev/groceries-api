@@ -51,4 +51,8 @@ public class Product {
                 this.createdAt = LocalDateTime.now();
                 this.updatedAt = LocalDateTime.now();
         }
+
+        public Product(final UUID productId) {
+                this.id = productId;
+        }
 }
